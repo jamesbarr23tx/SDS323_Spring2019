@@ -1,0 +1,78 @@
+---
+title: "Exercise 1"
+author: "James Barr"
+date: "2/17/2020"
+output:
+    md_document:
+    variant: markdown_github
+
+---
+
+# ABIA Data: Problem 1
+## Question: Where did the most flights come from during SXSW & how does that differ from a usual week?
+### Reading in the data & necessary packages
+```{r Load, echo =FALSE}
+library(mosaic)
+library(tidyverse)
+ABIA = read.csv('ABIA.csv')
+```
+### Creating New Variables
+```{r Variables}
+ABIA$Date <- as.Date(with(ABIA, paste(Year, Month, DayofMonth,sep="-")), "%Y-%m-%d")
+ABIA$Week = strftime(ABIA$Date, format = "%V")
+```
+### Filter data down to flights coming to Austin
+```{r ToAus}
+ToAus = filter(ABIA, Dest == "AUS")
+SXSWFlightMonth = filter(ToAus, ToAus$Month == 3)
+SXSWFlight = filter(SXSWFlightMonth, between(SXSWFlightMonth$DayofMonth,10,16))
+```
+### Filter data to just flights to Austin in Spring
+```{r ToAusSpring}
+Spring_list = c('07','08','09', '10','11','12','13','14','15')
+Spring = ToAus %>%
+  filter(Week %in% Spring_list) 
+SXSWWeek = ToAus %>%
+  filter(Week == '11')
+```
+###How many flights came to Austin each week in Spring
+```{r nrowSpring}
+nrow(Spring)/9
+```
+### Create filtered data set for only flights to Austin in SXSW week
+```{r SXSWWeekFilter}
+SXSWWeek = ToAus %>%
+  filter(Week == '11')
+nrow(SXSWWeek)
+```
+### Plot of how many flights come in each week to Austin in Spring
+```{r Longitude}
+Spring %>%
+  mutate(SXSWWeek = ifelse(Week == 11, T,F)) %>%
+ggplot(aes(x=Week)) +
+  geom_bar(aes(fill = SXSWWeek))+
+  labs(x = 'Week', y = 'Number of Flights', title = 'Flights per Week to ABIA in Spring 2008')
+```
+### Plot of where flights come from throughout spring
+```{r SpringOrigin}
+SpringOriginBarPlot = Spring %>%
+  ggplot(aes(x=Origin)) +
+  geom_bar()+
+  coord_flip() +
+    labs(x = 'Origin', y = 'Number of Flights', title = 'Origins of flights to ABIA in Spring 2008')
+
+SpringOriginBarPlot
+```
+### Plot of where flights come from throughout SXSW
+```{r SXSWOrigin, echo =FALSE}
+SXSWOriginBarPlot = ggplot(data = SXSWWeek) +
+  geom_bar(aes((x=Origin))) +
+    coord_flip() +
+      labs(x = 'Origin', y = 'Number of Flights', title = 'Origins of flights to ABIA during SXSW 2008')
+
+SXSWOriginBarPlot
+```
+##Conclusion
+```{r Conclusion}
+'There is not a huge difference between SXSW and a normal Spring week in terms of how many flights are coming in and where the flights are coming from.
+In both periods, Dallas sent by far the most flights to Austin compared to any other city.'

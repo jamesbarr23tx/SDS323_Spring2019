@@ -1,0 +1,42 @@
+---
+title: "Problem2"
+author: "James Barr"
+date: "2/17/2020"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r,read}
+creatinine = read.csv('creatinine.csv')
+```
+#Question1: What creatinine clearance rate should we expect, on average, for a 55-year-old?
+```{r,CreatModel}
+lm1 = lm(creatclear ~ age, data=creatinine)
+predict(lm1,list(age=55))
+```
+##Answer: The expected Creatinine clearnace rate for a 55 year old is 113.7228.
+
+#Question2: How does creatinine clearance rate change with age? (This should be a number with units ml/minute per year.)
+```{r,CreatCoef}
+coef(lm1)
+```
+##Answer: On average,creatinine clearance rate decreases by 0.6198159ml/minute per year
+
+#Question3: Whose creatinine clearance rate is healthier (higher) for their age: a 40-year-old with a rate of 135, or a 60-year-old with a rate of 112?
+````{r, "healthier"}
+predict(lm1,list(age=c(40,60)))
+#40 year old expected CCR is 123.0203
+#60 year old expected CCR is 110.6240
+
+#Formulas Below = Actual - Predicted
+135-123.0203
+#40 year old CCR is 11.9797mL/min healthier than average
+112-110.6240
+#60 year old CCR is 1.376mL/min healthier than average
+```
+###Answer: 40 year old has a healthier CCR for his age than the 60 year old

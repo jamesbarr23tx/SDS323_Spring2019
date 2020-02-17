@@ -1,0 +1,50 @@
+---
+title: "Problem4"
+author: "James Barr"
+date: "2/17/2020"
+output: 
+   md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, load}
+milk = read.csv('milk.csv')
+```
+
+```{r, testrev}
+#Create new variables
+milk$revenue = milk$sales * milk$price
+##Check to see if a basic model would do any good
+plot(milk$price, milk$revenue)
+###clearly not linear relationship
+```
+
+```{r,logmodel}
+#Try logarithmic model
+## Create new variables
+logsales = log(milk$sales)
+logprice = log(milk$price)
+###Check to make sure i did it right
+str(milk)
+
+#Create logarithmic model
+demandcurve = lm(logsales ~ logprice, data = milk)
+## Check to see if the model is any good
+summary(demandcurve)
+plot(demandcurve,which = 1)
+plot(demandcurve,which = 2)
+### Log model works pretty well
+```
+
+```{r, hmmm}
+# profit = revenue - C,
+## = sales*price - C
+### = e^-1.61858 * price - C
+####I'm stuck
+
+"Well, frankly I don't know what to do. Hopefully I can get partial creadit, but I can't figure out how to put this equation in terms of C"
+
